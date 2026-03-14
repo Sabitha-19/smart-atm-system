@@ -318,23 +318,7 @@ else:
 7. **Day of Week** (1%)
 8. **Weekend Flag** (1%)
 
-## 🎨 Screenshots
 
-### Home Page
-![Home Page](screenshots/home.png)
-*Landing page with user and admin login options*
-
-### User Dashboard
-![User Dashboard](screenshots/dashboard.png)
-*Main user interface with balance and transaction options*
-
-### Admin Dashboard
-![Admin Dashboard](screenshots/admin.png)
-*Admin panel showing fraud alerts and user management*
-
-### Fraud Alert
-![Fraud Alert](screenshots/fraud_alert.png)
-*Real-time fraud detection blocking suspicious transaction*
 
 ## 🚀 Future Enhancements
 
@@ -427,7 +411,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [YourGitHub](https://github.com/yourusername)
+- **Sabitha** - *Student* - [Sabitha-19](https://github.com/Sabitha-19/smart-atm-system)
 
 ## 🙏 Acknowledgments
 
@@ -439,9 +423,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact
 
 For questions or support:
-- Email: your.email@example.com
-- GitHub Issues: [Create an issue](https://github.com/yourusername/Smart_ATM_Fraud_Detection/issues)
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
+- Email: sabithas7049@gmail.com
+- GitHub Issues: [Create an issue](https://github.com/Sabitha-19/smart-atm-system)
+- LinkedIn: [Sabitha Saravanan](http://www.linkedin.com/in/%20sabithasaravanan)
 
 ## 📚 References
 
