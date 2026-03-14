@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart ATM System - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 Smart ATM System</h1>
+            <p>with Machine Learning Fraud Detection</p>
+        </div>
+        
+        <div class="welcome-card">
+            <h2>Welcome to Our ATM System</h2>
+            <p>Secure banking with AI-powered fraud protection</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <span class="icon">🔒</span>
+                    <h3>Secure</h3>
+                    <p>PIN-protected authentication</p>
+                </div>
+                <div class="feature">
+                    <span class="icon">🤖</span>
+                    <h3>AI-Powered</h3>
+                    <p>Real-time fraud detection</p>
+                </div>
+                <div class="feature">
+                    <span class="icon">⚡</span>
+                    <h3>Fast</h3>
+                    <p>Quick transactions</p>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-primary">User Login</a>
+                <a href="{{ url_for('admin_login') }}" class="btn btn-secondary">Admin Login</a>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3>📋 Demo Accounts</h3>
+            <div class="demo-accounts">
+                <div class="account-item">
+                    <strong>Account:</strong> 1234567890<br>
+                    <strong>PIN:</strong> 1234<br>
+                    <strong>Balance:</strong> $5,000
+                </div>
+                <div class="account-item">
+                    <strong>Account:</strong> 0987654321<br>
+                    <strong>PIN:</strong> 5678<br>
+                    <strong>Balance:</strong> $3,000
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

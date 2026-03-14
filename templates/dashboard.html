@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart ATM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 Smart ATM</h1>
+            <div class="user-info">
+                <span>Welcome, {{ user.name }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-small">Logout</a>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="balance-card">
+                <h2>Account Balance</h2>
+                <div class="balance-amount" id="balance-display">
+                    ${{ "%.2f"|format(user.balance) }}
+                </div>
+                <p class="account-number">Account: {{ user.account_number }}</p>
+            </div>
+            
+            <div class="actions-grid">
+                <div class="action-card" onclick="showWithdraw()">
+                    <span class="action-icon">💵</span>
+                    <h3>Withdraw</h3>
+                    <p>Cash withdrawal</p>
+                </div>
+                
+                <div class="action-card" onclick="showDeposit()">
+                    <span class="action-icon">💰</span>
+                    <h3>Deposit</h3>
+                    <p>Deposit money</p>
+                </div>
+                
+                <div class="action-card" onclick="checkBalance()">
+                    <span class="action-icon">📊</span>
+                    <h3>Balance</h3>
+                    <p>Check balance</p>
+                </div>
+                
+                <div class="action-card" onclick="showMiniStatement()">
+                    <span class="action-icon">📄</span>
+                    <h3>Statement</h3>
+                    <p>Mini statement</p>
+                </div>
+            </div>
+            
+            <div class="recent-transactions">
+                <h3>Recent Transactions</h3>
+                <div class="transactions-list">
+                    {% if transactions %}
+                        {% for tx in transactions %}
+                        <div class="transaction-item {% if tx.is_fraud %}fraud{% endif %}">
+                            <div class="tx-info">
+                                <span class="tx-type">{{ tx.transaction_type.title() }}</span>
+                                <span class="tx-date">{{ tx.timestamp[:16] }}</span>
+                            </div>
+                            <div class="tx-amount {% if tx.transaction_type == 'withdrawal' %}negative{% else %}positive{% endif %}">
+                                {% if tx.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}${{ "%.2f"|format(tx.amount) }}
+                            </div>
+                            {% if tx.status == 'blocked' %}
+                            <span class="status-badge blocked">BLOCKED</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-transactions">No recent transactions</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
+            <h2>Withdraw Money</h2>
+            <div class="form-group">
+                <label for="withdrawAmount">Amount ($)</label>
+                <input type="number" id="withdrawAmount" placeholder="Enter amount" min="10" step="10">
+            </div>
+            <button onclick="processWithdraw()" class="btn btn-primary btn-block">Withdraw</button>
+        </div>
+    </div>
+    
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('depositModal')">&times;</span>
+            <h2>Deposit Money</h2>
+            <div class="form-group">
+                <label for="depositAmount">Amount ($)</label>
+                <input type="number" id="depositAmount" placeholder="Enter amount" min="10" step="10">
+            </div>
+            <button onclick="processDeposit()" class="btn btn-primary btn-block">Deposit</button>
+        </div>
+    </div>
+    
+    <!-- Mini Statement Modal -->
+    <div id="statementModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('statementModal')">&times;</span>
+            <h2>Mini Statement</h2>
+            <div id="statementContent"></div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

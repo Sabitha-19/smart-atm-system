@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Smart ATM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🔐 Admin Dashboard</h1>
+            <div class="admin-info">
+                <span>{{ session.admin_username }}</span>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-small">Logout</a>
+            </div>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <h3>{{ stats.total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+            
+            <div class="stat-card warning">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-content">
+                    <h3>{{ stats.flagged_users }}</h3>
+                    <p>Flagged Users</p>
+                </div>
+            </div>
+            
+            <div class="stat-card danger">
+                <div class="stat-icon">🚫</div>
+                <div class="stat-content">
+                    <h3>{{ stats.blocked_users }}</h3>
+                    <p>Blocked Users</p>
+                </div>
+            </div>
+            
+            <div class="stat-card alert">
+                <div class="stat-icon">🔔</div>
+                <div class="stat-content">
+                    <h3>{{ stats.active_alerts }}</h3>
+                    <p>Active Alerts</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('alerts')">🔔 Fraud Alerts</button>
+            <button class="tab-btn" onclick="showTab('users')">👥 Users</button>
+            <button class="tab-btn" onclick="showTab('transactions')">💳 Transactions</button>
+        </div>
+        
+        <!-- Fraud Alerts Tab -->
+        <div id="alerts-tab" class="tab-content active">
+            <h2>Fraud Alerts</h2>
+            <div class="table-container">
+                {% if alerts %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Alert ID</th>
+                            <th>User</th>
+                            <th>Account</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Severity</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts %}
+                        <tr>
+                            <td>#{{ alert.alert_id }}</td>
+                            <td>{{ alert.name }}</td>
+                            <td>{{ alert.account_number }}</td>
+                            <td><span class="badge">{{ alert.alert_type }}</span></td>
+                            <td>{{ alert.description }}</td>
+                            <td><span class="severity {{ alert.severity }}">{{ alert.severity.upper() }}</span></td>
+                            <td>{{ alert.timestamp[:16] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>✅ No active fraud alerts</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Users Tab -->
+        <div id="users-tab" class="tab-content">
+            <h2>User Management</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Account Number</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr id="user-{{ user.user_id }}">
+                            <td>{{ user.user_id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.account_number }}</td>
+                            <td>${{ "%.2f"|format(user.balance) }}</td>
+                            <td>
+                                {% if user.is_blocked %}
+                                    <span class="status-badge blocked">BLOCKED</span>
+                                {% elif user.is_flagged %}
+                                    <span class="status-badge flagged">FLAGGED</span>
+                                {% else %}
+                                    <span class="status-badge active">ACTIVE</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_blocked %}
+                                    <button onclick="unblockUser({{ user.user_id }})" class="btn btn-small btn-success">Unblock</button>
+                                {% else %}
+                                    <button onclick="blockUser({{ user.user_id }})" class="btn btn-small btn-danger">Block</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Transactions Tab -->
+        <div id="transactions-tab" class="tab-content">
+            <h2>Recent Transactions</h2>
+            <div class="table-container">
+                {% if transactions %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Account</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Fraud Score</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                        <tr class="{% if tx.is_fraud %}fraud-row{% endif %}">
+                            <td>#{{ tx.transaction_id }}</td>
+                            <td>{{ tx.name }}</td>
+                            <td>{{ tx.account_number }}</td>
+                            <td><span class="badge {{ tx.transaction_type }}">{{ tx.transaction_type.upper() }}</span></td>
+                            <td>${{ "%.2f"|format(tx.amount) }}</td>
+                            <td>
+                                {% if tx.status == 'blocked' %}
+                                    <span class="status-badge blocked">BLOCKED</span>
+                                {% else %}
+                                    <span class="status-badge active">{{ tx.status.upper() }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="fraud-score {% if tx.fraud_score > 0.7 %}high{% elif tx.fraud_score > 0.3 %}medium{% else %}low{% endif %}">
+                                    {{ "%.1f"|format(tx.fraud_score * 100) }}%
+                                </span>
+                            </td>
+                            <td>{{ tx.timestamp[:16] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>No transactions yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
